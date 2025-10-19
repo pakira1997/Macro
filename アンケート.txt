@@ -1,145 +1,73 @@
 Sub RearrangeCol5_ByBlockOf17_ReverseOrder()
-
-    Dim filePath As String          ' 入力CSV
-
-    Dim outputFile As String        ' 出力CSV
-
-    Dim fIn As Integer, fOut As Integer
-
-    Dim lineData As String
-
-    Dim fields() As String
-
-    Dim buf(1 To 17) As String      ' 17行分の5列目を保持
-
-    Dim cnt As Long                 ' バッファに溜まっている数(1..17)
-
-    Dim i As Long
-
-    
-
-    '=== ここを環境に合わせて変更 ===
-
-    filePath = "C:\test\data.csv"
-
-    outputFile = "C:\test\rearranged.csv"
-
-    '==============================
-
-
-    ' 入力を開く
-
-    fIn = FreeFile
-
-    Open filePath For Input As #fIn
-
-    
-
-    ' 出力を開く
-
-    fOut = FreeFile
-
-    Open outputFile For Output As #fOut
-
-    
-
-    cnt = 0
-
-    Do Until EOF(fIn)
-
-        Line Input #fIn, lineData
-
-        
-
-        ' カンマ区切りで分解（※引用符付きCSVは未対応。必要ならTextFieldParserを検討）
-
-        fields = Split(lineData, ",")
-
-        
-
-        ' 5列目がある行のみ対象
-
-        If UBound(fields) >= 4 Then
-
-            cnt = cnt + 1
-
-            buf(cnt) = fields(4)
-
-            
-
-            ' 17件溜まったら 17→16→…→1 の順で出力
-
-            If cnt = 17 Then
-
-                Dim rev As String
-
-                rev = ""
-
-                For i = 17 To 1 Step -1
-
-                    If i = 17 Then
-
-                        rev = buf(i)
-
-                    Else
-
-                        rev = rev & "," & buf(i)
-
-                    End If
-
-                Next i
-
-                Print #fOut, rev
-
-                cnt = 0
-
-            End If
-
-        End If
-
-    Loop
-
-    
-
-    ' 端数(17に満たない最後のブロック)があれば、その分だけ 逆順 で出力
-
-    If cnt > 0 Then
-
-        Dim revLast As String
-
-        revLast = ""
-
-        For i = cnt To 1 Step -1
-
-            If i = cnt Then
-
-                revLast = buf(i)
-
-            Else
-
-                revLast = revLast & "," & buf(i)
-
-            End If
-
-        Next i
-
-        Print #fOut, revLast
-
-    End If
-
-    
-
-    Close #fIn
-
-    Close #fOut
-
-    
-
-    MsgBox "完了しました。" & vbCrLf & _
-
-           "入力: " & filePath & vbCrLf & _
-
-           "出力: " & outputFile
-
+    Dim filePath As String          ' 入力CSV
+    Dim outputFile As String        ' 出力CSV
+    Dim fIn As Integer, fOut As Integer
+    Dim lineData As String
+    Dim fields() As String
+    Dim buf(1 To 17) As String      ' 17行分の5列目を保持
+    Dim cnt As Long                 ' バッファに溜まっている数(1..17)
+    Dim i As Long
+    
+    '=== ここを環境に合わせて変更 ===
+    filePath = "C:\test\data.csv"
+    outputFile = "C:\test\rearranged.csv"
+    '==============================
+
+    ' 入力を開く
+    fIn = FreeFile
+    Open filePath For Input As #fIn
+    
+    ' 出力を開く
+    fOut = FreeFile
+    Open outputFile For Output As #fOut
+    
+    cnt = 0
+    Do Until EOF(fIn)
+        Line Input #fIn, lineData
+        
+        ' カンマ区切りで分解（※引用符付きCSVは未対応。必要ならTextFieldParserを検討）
+        fields = Split(lineData, ",")
+        
+        ' 5列目がある行のみ対象
+        If UBound(fields) >= 4 Then
+            cnt = cnt + 1
+            buf(cnt) = fields(4)
+            
+            ' 17件溜まったら 17→16→…→1 の順で出力
+            If cnt = 17 Then
+                Dim rev As String
+                rev = ""
+                For i = 17 To 1 Step -1
+                    If i = 17 Then
+                        rev = buf(i)
+                    Else
+                        rev = rev & "," & buf(i)
+                    End If
+                Next i
+                Print #fOut, rev
+                cnt = 0
+            End If
+        End If
+    Loop
+    
+    ' 端数(17に満たない最後のブロック)があれば、その分だけ 逆順 で出力
+    If cnt > 0 Then
+        Dim revLast As String
+        revLast = ""
+        For i = cnt To 1 Step -1
+            If i = cnt Then
+                revLast = buf(i)
+            Else
+                revLast = revLast & "," & buf(i)
+            End If
+        Next i
+        Print #fOut, revLast
+    End If
+    
+    Close #fIn
+    Close #fOut
+    
+    MsgBox "完了しました。" & vbCrLf & _
+           "入力: " & filePath & vbCrLf & _
+           "出力: " & outputFile
 End Sub
-
