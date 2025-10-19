@@ -1,0 +1,41 @@
+﻿Sub ExtractRowsWithZero_Col3or4()
+    Dim fso As Object
+    Dim tsIn As Object, tsOut As Object
+    Dim line As String
+    Dim fields() As String
+    Dim inputFile As String, outputFile As String
+    Dim lineCount As Long
+    
+    ' 入出力ファイルパス設定
+    inputFile = Application.GetOpenFilename("CSV Files (*.csv),*.csv", , "抽出対象のCSVファイルを選択してください")
+    If inputFile = "False" Then Exit Sub
+    
+    outputFile = Left(inputFile, InStrRev(inputFile, ".")) & "filtered.csv"
+    
+    ' FSO初期化
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    Set tsIn = fso.OpenTextFile(inputFile, 1, False)
+    Set tsOut = fso.CreateTextFile(outputFile, True)
+    
+    lineCount = 0
+    ' CSVを1行ずつ処理
+    Do Until tsIn.AtEndOfStream
+        line = tsIn.ReadLine
+        If Len(line) > 0 Then
+            fields = Split(line, ",")
+            
+            ' 3列目または4列目が0の場合に抽出
+            If UBound(fields) >= 3 Then
+                If Trim(fields(2)) = "0" Or Trim(fields(3)) = "0" Then
+                    tsOut.WriteLine line
+                    lineCount = lineCount + 1
+                End If
+            End If
+        End If
+    Loop
+    
+    tsIn.Close
+    tsOut.Close
+    
+    MsgBox "抽出完了: " & lineCount & " 行を " & outputFile & " に出力しました。", vbInformation
+End Sub
